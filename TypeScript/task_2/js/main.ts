@@ -1,7 +1,4 @@
-// ============================================================================
 // 1. Structural Interfaces
-// ============================================================================
-
 interface DirectorInterface {
   workFromHome(): string;
   getCoffeeBreak(): string;
@@ -14,63 +11,52 @@ interface TeacherInterface {
   workTeacherTasks(): string;
 }
 
-
-// ============================================================================
 // 2. Class Implementations
-// ============================================================================
-
 class Director implements DirectorInterface {
-  workFromHome(): string {
-    return "Working from home";
-  }
-
-  getCoffeeBreak(): string {
-    return "Getting a coffee break";
-  }
-
-  workDirectorTasks(): string {
-    return "Getting to director tasks";
-  }
+  workFromHome(): string { return "Working from home"; }
+  getCoffeeBreak(): string { return "Getting a coffee break"; }
+  workDirectorTasks(): string { return "Getting to director tasks"; }
 }
 
 class Teacher implements TeacherInterface {
-  workFromHome(): string {
-    return "Cannot work from home";
-  }
-
-  getCoffeeBreak(): string {
-    return "Cannot have a break";
-  }
-
-  workTeacherTasks(): string {
-    return "Getting to work";
-  }
+  workFromHome(): string { return "Cannot work from home"; }
+  getCoffeeBreak(): string { return "Cannot have a break"; }
+  workTeacherTasks(): string { return "Getting to work"; }
 }
 
-
-// ============================================================================
-// 3. Factory Function Configuration
-// ============================================================================
-
-/**
- * Creates an employee instance based on their salary tier threshold.
- * * @param salary - Can accept either an explicit number metric value or a string.
- * @returns An instance matching the DirectorInterface or TeacherInterface blueprint.
- */
+// 3. Factory Function
 function createEmployee(salary: number | string): Director | Teacher {
-  // If the passed argument value is a number and strictly under 500
   if (typeof salary === "number" && salary < 500) {
     return new Teacher();
   }
-  // Otherwise (for strings or numbers >= 500), return a Director
   return new Director();
 }
 
+// 4. Type Guard Predicate & Worker Router Logic
+function isDirector(employee: Director | Teacher): employee is Director {
+  return employee instanceof Director;
+}
 
-// ============================================================================
-// --- Verification Execution ---
-// ============================================================================
+function executeWork(employee: Director | Teacher): void {
+  if (isDirector(employee)) {
+    console.log(employee.workDirectorTasks());
+  } else {
+    console.log(employee.workTeacherTasks());
+  }
+}
 
-console.log(createEmployee(200));   // Output: Teacher class instance object
-console.log(createEmployee(1000));  // Output: Director class instance object
-console.log(createEmployee('$500')); // Output: Director class instance object
+// 5. String Literal Types Strategy Configuration
+type Subjects = "Math" | "History";
+
+function teachClass(todayClass: Subjects): string {
+  if (todayClass === "Math") {
+    return "Teaching Math";
+  }
+  return "Teaching History";
+}
+
+// Global Verifications Output Checks
+executeWork(createEmployee(200));   // Getting to work
+executeWork(createEmployee(1000));  // Getting to director tasks
+console.log(teachClass('Math'));    // Teaching Math
+console.log(teachClass('History')); // Teaching History
